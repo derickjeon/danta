@@ -34,4 +34,5 @@ def indicators():
     return render_template("indicators.html")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))  # Render는 기본적으로 PORT 환경 변수를 사용
+    app.run(host="0.0.0.0", port=port, debug=False)
