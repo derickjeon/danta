@@ -192,6 +192,35 @@ def analyze_top_20_coins():
         })
     return coin_list
 
+# ... (기존 analyze_top_20_coins 함수)
+
+def update_index_page():
+    reports_dir = "docs/reports"
+    files = sorted([f for f in os.listdir(reports_dir) if f.endswith(".html")], reverse=True)
+
+    # 리포트 목록 HTML 생성
+    links = "\n".join([f'<li><a href="reports/{f}">{f.replace(".html", "")} 리포트</a></li>' for f in files])
+
+    index_html = f"""
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <title>📊 단타 리포트 메인</title>
+    </head>
+    <body>
+        <h1>📊 단타 리포트 메인</h1>
+        <ul>
+            {links}
+        </ul>
+        <p><a href="indicators.html">📘 단타 지표 해설 보기</a></p>
+    </body>
+    </html>
+    """
+
+    with open("docs/index.html", "w", encoding="utf-8") as f:
+        f.write(index_html)
+
 
 # 📄 리포트 생성
 def generate_report():
@@ -347,3 +376,5 @@ def generate_report():
 
 if __name__ == "__main__":
     generate_report()
+    update_index_page()  # ✅ 인덱스 갱신 함수 실행
+
