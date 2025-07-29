@@ -192,34 +192,69 @@ def analyze_top_20_coins():
         })
     return coin_list
 
-# ... (기존 analyze_top_20_coins 함수)
 
+# 🔧 index.html 자동 업데이트
 def update_index_page():
     reports_dir = "docs/reports"
     files = sorted([f for f in os.listdir(reports_dir) if f.endswith(".html")], reverse=True)
+    if not files:
+        print("⚠ 리포트 파일이 없습니다. index.html 업데이트를 건너뜁니다.")
+        return
 
-    # 리포트 목록 HTML 생성
-    links = "\n".join([f'<li><a href="reports/{f}">{f.replace(".html", "")} 리포트</a></li>' for f in files])
+    latest_report = files[0]
+    previous_reports = files[1:6]  # 최근 5개 리포트
+
+    # 이전 리포트 링크 생성
+    links = "\n".join([f'<li class="list-group-item"><a href="reports/{f}">{f.replace(".html", "")} 리포트</a></li>' for f in previous_reports])
 
     index_html = f"""
     <!DOCTYPE html>
     <html lang="ko">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>📊 단타 리포트 메인</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {{ font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; }}
+            .header {{ background: linear-gradient(90deg, #4a90e2, #357ab8); color: white; padding: 20px; text-align: center; border-radius: 0 0 15px 15px; margin-bottom: 20px; }}
+            .card {{ border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }}
+            .section-title {{ font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; }}
+            .report-link {{ text-decoration: none; color: #4a90e2; font-weight: 500; }}
+            .report-link:hover {{ text-decoration: underline; color: #357ab8; }}
+        </style>
     </head>
     <body>
-        <h1>📊 단타 리포트 메인</h1>
-        <ul>
-            {links}
-        </ul>
-        <p><a href="indicators.html">📘 단타 지표 해설 보기</a></p>
+        <header class="header">
+            <h1>📊 단타 리포트 메인</h1>
+        </header>
+        <main class="container">
+            <div class="card p-4">
+                <div class="section-title">📖 단타 지표 해설</div>
+                <p>주요 단타 매매 지표(RSI, MACD, 볼린저밴드 등)를 확인하고 학습하세요.</p>
+                <a href="indicators.html" class="btn btn-primary btn-sm">지표 해설 보기</a>
+            </div>
+            <div class="card p-4">
+                <div class="section-title">📰 오늘의 리포트</div>
+                <a href="reports/{latest_report}" class="btn btn-success btn-lg w-100">📂 {latest_report.replace(".html", "")} 리포트 열기</a>
+            </div>
+            <div class="card p-4">
+                <div class="section-title">📅 이전 리포트 목록</div>
+                <ul class="list-group">
+                    {links}
+                </ul>
+            </div>
+        </main>
+        <footer class="text-center py-3 mt-4 text-muted">
+            © {datetime.now().year} Derick Jeon | <a href="https://github.com/derickjeon/danta" target="_blank">GitHub</a>
+        </footer>
     </body>
     </html>
     """
 
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(index_html)
+    print(f"✅ index.html 자동 업데이트 완료! (최신: {latest_report})")
 
 
 # 📄 리포트 생성
@@ -269,7 +304,6 @@ def generate_report():
     <th>캔들패턴</th><th>추천</th><th>매수전 확인 포인트</th>
     </tr>
 
-    <!-- 🔽 기준 값 행 추가 -->
     <tr style='background:#f2f2f2; font-size:12px;'>
     <td colspan='5'>지표 기준</td>
     <td>과매도 <30 / 정상 50 / 과매수 >70</td>
@@ -282,74 +316,37 @@ def generate_report():
     </tr>
     """
 
-    # 종목 데이터 반복문
     for i, row in stock_df.iterrows():
-        # RSI 색상
-        if row['RSI'] < 30:
-            rsi_cell = f"<td style='background-color:#f8e6f8'>{row['RSI']}</td>"
-        elif row['RSI'] > 70:
-            rsi_cell = f"<td style='background-color:#e6f2ff'>{row['RSI']}</td>"
-        else:
-            rsi_cell = f"<td>{row['RSI']}</td>"
+        # 색상 처리 (RSI, MACD 등)
+        def color_cell(value, low, high, label):
+            if label == "RSI":
+                if value < 30: return f"<td style='background:#f8e6f8'>{value}</td>"
+                elif value > 70: return f"<td style='background:#e6f2ff'>{value}</td>"
+            return f"<td>{value}</td>"
 
-        # MACD 색상
+        rsi_cell = color_cell(row['RSI'], 30, 70, "RSI")
         macd_status = '골든' if row['MACD_Golden'] else '데드'
-        if macd_status == '골든':
-            macd_cell = f"<td style='background-color:#f8e6f8'>{macd_status}</td>"
-        else:
-            macd_cell = f"<td style='background-color:#e6f2ff'>{macd_status}</td>"
+        macd_cell = f"<td style='background:{'#f8e6f8' if macd_status=='골든' else '#e6f2ff'}'>{macd_status}</td>"
 
-        # 볼린저 색상
-        if row['볼린저위치'] == '하단 근접':
-            boll_cell = f"<td style='background-color:#f8e6f8'>{row['볼린저위치']}</td>"
-        elif row['볼린저위치'] == '상단 돌파':
-            boll_cell = f"<td style='background-color:#e6f2ff'>{row['볼린저위치']}</td>"
-        else:
-            boll_cell = f"<td>{row['볼린저위치']}</td>"
+        boll_cell = f"<td style='background:{'#f8e6f8' if row['볼린저위치']=='하단 근접' else '#e6f2ff' if row['볼린저위치']=='상단 돌파' else 'none'}'>{row['볼린저위치']}</td>"
 
-        # 스토캐스틱 색상
-        if row['%K'] < 20:
-            stoch_cell = f"<td style='background-color:#f8e6f8'>{row['%K']:.1f}</td>"
-        elif row['%K'] > 80:
-            stoch_cell = f"<td style='background-color:#e6f2ff'>{row['%K']:.1f}</td>"
-        else:
-            stoch_cell = f"<td>{row['%K']:.1f}</td>"
+        stoch_cell = f"<td style='background:{'#f8e6f8' if row['%K']<20 else '#e6f2ff' if row['%K']>80 else 'none'}'>{row['%K']:.1f}</td>"
 
-        # 이격도 색상
-        if row['이격도'] < 95:
-            gap_cell = f"<td style='background-color:#f8e6f8'>{row['이격도']}</td>"
-        elif row['이격도'] > 105:
-            gap_cell = f"<td style='background-color:#e6f2ff'>{row['이격도']}</td>"
-        else:
-            gap_cell = f"<td>{row['이격도']}</td>"
+        gap_cell = f"<td style='background:{'#f8e6f8' if row['이격도']<95 else '#e6f2ff' if row['이격도']>105 else 'none'}'>{row['이격도']}</td>"
 
-        # 캔들패턴 색상
-        if '망치' in row['캔들패턴']:
-            candle_cell = f"<td style='background-color:#f8e6f8'>{row['캔들패턴']}</td>"
-        elif '역망치' in row['캔들패턴']:
-            candle_cell = f"<td style='background-color:#e6f2ff'>{row['캔들패턴']}</td>"
-        else:
-            candle_cell = f"<td>{row['캔들패턴']}</td>"
-        
-        # 추천강도 색상
+        candle_cell = f"<td style='background:{'#f8e6f8' if '망치' in row['캔들패턴'] else '#e6f2ff' if '역망치' in row['캔들패턴'] else 'none'}'>{row['캔들패턴']}</td>"
+
         if 'Strong Buy' in row['추천강도']:
-            recommend_cell = f"<td style='background-color:#ffcccc'>{row['추천강도']}</td>"  # 옅은 빨간색
+            recommend_cell = f"<td style='background:#ffcccc'>{row['추천강도']}</td>"
         elif 'Buy' in row['추천강도']:
-            recommend_cell = f"<td style='background-color:#ffe6f0'>{row['추천강도']}</td>"  # 옅은 핑크색
+            recommend_cell = f"<td style='background:#ffe6f0'>{row['추천강도']}</td>"
         else:
             recommend_cell = f"<td>{row['추천강도']}</td>"
 
-
-        # 행 생성
-        html += f"<tr><td>{i+1}</td><td><a href='https://finance.naver.com/item/main.nhn?code={row['종목코드']}' target='_blank'>{row['종목명']}</a></td><td>{row['현재가']:,}</td><td>{row['등락률']:.2f}%</td><td>{row['거래량']:,}</td>"
-
-        html += f"{rsi_cell}{macd_cell}{boll_cell}{stoch_cell}{gap_cell}{candle_cell}"
-        html += f"{recommend_cell}<td>{row['매수전확인']}</td></tr>"
-
+        html += f"<tr><td>{i+1}</td><td><a href='https://finance.naver.com/item/main.nhn?code={row['종목코드']}' target='_blank'>{row['종목명']}</a></td><td>{row['현재가']:,}</td><td>{row['등락률']:.2f}%</td><td>{row['거래량']:,}</td>{rsi_cell}{macd_cell}{boll_cell}{stoch_cell}{gap_cell}{candle_cell}{recommend_cell}<td>{row['매수전확인']}</td></tr>"
 
     html += "</table>"
 
-    # 장전 전략
     html += """
     <h2>🕗 장전 시간외 거래 전략 (08:30~08:40)</h2>
     <ul>
@@ -359,22 +356,20 @@ def generate_report():
     </ul>
     """
 
-    # 코인 추천
     html += "<h2>🪙 추천 코인 20선</h2><table><tr><th>이름</th><th>기호</th><th>가격</th><th>등락률</th><th>거래량</th><th>점수</th><th>추천</th><th>아이콘</th></tr>"
     for coin in coin_list:
-        html += f"<tr><td><a href='https://coinmarketcap.com/currencies/{coin['이름'].lower().replace(' ', '-')}/' target='_blank'>{coin['이름']}</a></td><td>{coin['기호']}</td><td>{coin['현재가']}</td><td>{coin['등락률']}</td><td>{coin['거래량']}</td>"
-
-        html += f"<td>{coin['점수']}</td><td>{coin['추천강도']}</td><td><img src='{coin['아이콘']}' width='25'></td></tr>"
+        html += f"<tr><td><a href='https://coinmarketcap.com/currencies/{coin['이름'].lower().replace(' ', '-')}/' target='_blank'>{coin['이름']}</a></td><td>{coin['기호']}</td><td>{coin['현재가']}</td><td>{coin['등락률']}</td><td>{coin['거래량']}</td><td>{coin['점수']}</td><td>{coin['추천강도']}</td><td><img src='{coin['아이콘']}' width='25'></td></tr>"
     html += "</table></body></html>"
 
     os.makedirs("docs/reports", exist_ok=True)
     with open(f"docs/reports/{today}.html", "w", encoding="utf-8") as f:
-          f.write(html)
+        f.write(html)
 
     print(f"✅ {today} 리포트 생성 완료!")
 
 
 if __name__ == "__main__":
     generate_report()
-    update_index_page()  # ✅ 인덱스 갱신 함수 실행
+    update_index_page()  # ✅ 최신 index.html 자동 업데이트
+
 
