@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be RICH, J's Family</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; display: none; }
+        .header { background: linear-gradient(90deg, #4a90e2, #357ab8); color: white; padding: 20px; text-align: center; border-radius: 0 0 15px 15px; margin-bottom: 20px; }
+        .card { border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .section-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; }
+        .report-link { text-decoration: none; color: #4a90e2; font-weight: 500; }
+        .report-link:hover { text-decoration: underline; color: #357ab8; }
+    </style>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const password = "0601"; // ✅ 비밀번호 설정
+        let input = "";
+
+        while (true) {
+            input = prompt("🔒 비밀번호를 입력하세요:") || "";
+            if (input.trim() === password) {
+                document.body.style.display = "block";
+                break;
+            } else {
+                alert("비밀번호가 틀렸습니다. 다시 시도하세요.");
+            }
+        }
+    });
+</script>
+
+</head>
+<body>
+    <header class="header">
+        <h1>Be RICH, J's Family</h1>
+    </header>
+    <main class="container">
+        <!-- 단타 지표 해설 -->
+        <div class="card p-4">
+            <div class="section-title">📖 단타 지표 해설</div>
+            <p>주요 단타 매매 지표(RSI, MACD, 볼린저밴드 등)를 확인하고 학습하세요.</p>
+            <a href="indicators.html" class="btn btn-primary btn-sm">지표 해설 보기</a>
+        </div>
+
+	<!-- 오늘의 리포트 -->
+        <div class="card p-4">
+            <div class="section-title">📰 오늘의 리포트</div>
+            <a href="reports/2025-07-29.html" class="btn btn-success btn-lg w-100">📂 2025-07-29 리포트 열기</a>
+        </div>
+
+        <!-- ✅ 오늘의 요약 -->
+        <div class="card p-4">
+            <div class="section-title">📊 오늘의 국내 증시 / 세계 경제 요약</div>
+            <ul>
+                <li>KOSPI: {{KOSPI}}</li>
+                <li>KOSDAQ: {{KOSDAQ}}</li>
+                <li>환율 (USD/KRW): {{USD_KRW}}</li>
+                <li>환율 (CAD/KRW): {{CAD_KRW}}</li>
+            </ul>
+            <h5 class="mt-3">🪙 오늘의 코인 경제 요약</h5>
+            <ul>
+                <li>Bitcoin: {{BTC}}</li>
+                <li>Ethereum: {{ETH}}</li>
+            </ul>
+            <h5 class="mt-3">🌍 주요 경제 뉴스</h5>
+            <ul>
+                <li><a href="#">[매일경제] 뉴스 제목 예시 1</a></li>
+                <li><a href="#">[한국경제] 뉴스 제목 예시 2</a></li>
+                <li><a href="#">[연합뉴스] 뉴스 제목 예시 3</a></li>
+                <li><a href="#">[Bloomberg] News Example 1</a></li>
+                <li><a href="#">[Reuters] News Example 2</a></li>
+                <li><a href="#">[CNBC] News Example 3</a></li>
+            </ul>
+        </div>
+
+        
+        <!-- 이전 리포트 목록 -->
+        <div class="card p-4">
+            <div class="section-title">📅 생성 리포트 목록</div>
+            <ul class="list-group">
+                <li class="list-group-item"><a href="reports/2025-07-28.html">2025-07-28 리포트</a></li>
+                <li class="list-group-item"><a href="reports/2025-07-27.html">2025-07-27 리포트</a></li>
+                <li class="list-group-item"><a href="reports/2025-07-26.html">2025-07-26 리포트</a></li>
+            </ul>
+        </div>
+    </main>
+    <footer class="text-center py-3 mt-4 text-muted">
+        © 2025 Derick Jeon | <a href="https://github.com/derickjeon/danta" target="_blank">GitHub</a>
+    </footer>
+</body>
+</html>
+
+
+
