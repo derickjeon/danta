@@ -140,7 +140,7 @@ def get_technical_indicators(stock):
     stock['매수전확인'] = " / ".join(strategy_points) if strategy_points else "중립: 추세 확인 필요"
 
     # 차트 생성
-    chart_dir = 'reports/charts'
+    chart_dir = 'docs/reports/charts'
     os.makedirs(chart_dir, exist_ok=True)
     plt.figure(figsize=(4, 2))
     plt.plot(close.iloc[::-1].values[-20:], marker='o')
@@ -338,9 +338,10 @@ def generate_report():
         html += f"<td>{coin['점수']}</td><td>{coin['추천강도']}</td><td><img src='{coin['아이콘']}' width='25'></td></tr>"
     html += "</table></body></html>"
 
-    os.makedirs("reports", exist_ok=True)
-    with open(f"reports/{today}.html", "w", encoding="utf-8") as f:
-        f.write(html)
+    os.makedirs("docs/reports", exist_ok=True)
+    with open(f"docs/reports/{today}.html", "w", encoding="utf-8") as f:
+          f.write(html)
+
     print(f"✅ {today} 리포트 생성 완료!")
 
 
