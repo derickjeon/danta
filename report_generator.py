@@ -195,6 +195,8 @@ def analyze_top_20_coins():
 
 # 🔧 index.html 자동 업데이트
 def update_index_page():
+    from data_fetcher import get_korea_market_summary, get_crypto_market_summary, get_main_news
+
     reports_dir = "docs/reports"
     files = sorted([f for f in os.listdir(reports_dir) if f.endswith(".html")], reverse=True)
     if not files:
@@ -204,40 +206,92 @@ def update_index_page():
     latest_report = files[0]
     previous_reports = files[1:6]  # 최근 5개 리포트
 
-    # 이전 리포트 링크 생성
-    links = "\n".join([f'<li class="list-group-item"><a href="reports/{f}">{f.replace(".html", "")} 리포트</a></li>' for f in previous_reports])
+    # ✅ 오늘의 요약 데이터
+    korea = get_korea_market_summary()
+    crypto = get_crypto_market_summary()
+    news_list = get_main_news()
 
+    # 이전 리포트 링크 생성
+    links = "\n".join([
+        f'<li class="list-group-item"><a href="reports/{f}">{f.replace(".html", "")} 리포트</a></li>'
+        for f in previous_reports
+    ])
+
+    # 뉴스 목록 생성
+    news_html = ""
+    if news_list:
+        for title, link in news_list:
+            news_html += f'<li><a href="{link}" target="_blank">{title}</a></li>'
+    else:
+        news_html = "<li>중요 경제 뉴스가 없습니다.</li>"
+
+    # ✅ index.html 생성 (비밀번호 보호 + 제목 변경 포함)
     index_html = f"""
     <!DOCTYPE html>
     <html lang="ko">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>📊 단타 리포트 메인</title>
+        <title>Be RICH, J's Family</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
-            body {{ font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; }}
+            body {{ font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; display: none; }}
             .header {{ background: linear-gradient(90deg, #4a90e2, #357ab8); color: white; padding: 20px; text-align: center; border-radius: 0 0 15px 15px; margin-bottom: 20px; }}
             .card {{ border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }}
             .section-title {{ font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; }}
             .report-link {{ text-decoration: none; color: #4a90e2; font-weight: 500; }}
             .report-link:hover {{ text-decoration: underline; color: #357ab8; }}
         </style>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {{
+                const password = "1234";  // ✅ 원하는 비밀번호로 변경 가능
+                let input = prompt("🔒 비밀번호를 입력하세요:");
+                if (input === password) {{
+                    document.body.style.display = "block";
+                }} else {{
+                    alert("비밀번호가 틀렸습니다. 접근이 거부됩니다.");
+                    window.location.href = "about:blank";
+                }}
+            }});
+        </script>
     </head>
     <body>
         <header class="header">
-            <h1>📊 단타 리포트 메인</h1>
+            <h1>Be RICH, J's Family</h1>
         </header>
         <main class="container">
+            <!-- 단타 지표 해설 -->
             <div class="card p-4">
                 <div class="section-title">📖 단타 지표 해설</div>
                 <p>주요 단타 매매 지표(RSI, MACD, 볼린저밴드 등)를 확인하고 학습하세요.</p>
                 <a href="indicators.html" class="btn btn-primary btn-sm">지표 해설 보기</a>
             </div>
+
+            <!-- 오늘의 요약 -->
+            <div class="card p-4">
+                <div class="section-title">📊 오늘의 국내 증시 / 세계 경제 요약</div>
+                <ul>
+                    <li>KOSPI: {korea['KOSPI']}</li>
+                    <li>KOSDAQ: {korea['KOSDAQ']}</li>
+                    <li>환율 (USD/KRW): {korea['환율 (USD/KRW)']}</li>
+                    <li>환율 (CAD/KRW): {korea['환율 (CAD/KRW)']}</li>
+                </ul>
+                <h5 class="mt-3">🪙 오늘의 코인 경제 요약</h5>
+                <ul>
+                    <li>Bitcoin: {crypto['Bitcoin']}</li>
+                    <li>Ethereum: {crypto['Ethereum']}</li>
+                </ul>
+                <h5 class="mt-3">🌍 주요 경제 뉴스</h5>
+                <ul>{news_html}</ul>
+            </div>
+
+            <!-- 오늘의 리포트 -->
             <div class="card p-4">
                 <div class="section-title">📰 오늘의 리포트</div>
                 <a href="reports/{latest_report}" class="btn btn-success btn-lg w-100">📂 {latest_report.replace(".html", "")} 리포트 열기</a>
             </div>
+
+            <!-- 이전 리포트 목록 -->
             <div class="card p-4">
                 <div class="section-title">📅 이전 리포트 목록</div>
                 <ul class="list-group">

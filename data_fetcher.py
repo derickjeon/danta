@@ -54,25 +54,48 @@ def get_crypto_market_summary():
     }
 
 # 🌍 중요 경제 뉴스 선별
-def get_main_news():
-    rss_url = 'https://www.mk.co.kr/rss/30000001/'  # 매일경제 경제 뉴스 RSS
-    feed = feedparser.parse(rss_url)
+import feedparser
 
-    include_keywords = ['금리', '인플레이션', '환율', '물가', '연준', '경제성장', '무역수지', '수출', '코스피', '코스닥', '원화', '기준금리', '유가', 'GDP']
+def get_main_news():
+    korean_feeds = [
+        ('매일경제', 'https://www.mk.co.kr/rss/30000001/'),
+        ('한국경제', 'https://rss.hankyung.com/economy.xml'),
+        ('연합뉴스', 'https://www.yna.co.kr/economy/rss'),
+    ]
+    english_feeds = [
+        ('Bloomberg', 'https://feeds.bloomberg.com/markets/news.rss'),
+        ('Reuters', 'https://feeds.reuters.com/reuters/businessNews'),
+        ('CNBC', 'https://www.cnbc.com/id/100003114/device/rss/rss.html'),
+    ]
+
     exclude_keywords = ['교육', '세미나', '행사', '전시', '후원', '축제', '홍보', '캠페인', '강좌', '전달식']
 
-    filtered_news = []
-    for entry in feed.entries[:15]:
-        title = entry.title
-        link = entry.link
+    def fetch_from_source(name, url, per_feed=3):
+        news_items = []
+        feed = feedparser.parse(url)
+        for entry in feed.entries:
+            title = entry.title if hasattr(entry, 'title') else entry.get('summary', 'No Title')
+            link = entry.link
+            if not any(word in title for word in exclude_keywords):
+                news_items.append((f"[{name}] {title}", link))
+            if len(news_items) >= per_feed:
+                break
+        # 만약 뉴스가 부족하면 "현재 뉴스 없음"으로 채움
+        while len(news_items) < per_feed:
+            news_items.append((f"[{name}] 현재 뉴스 없음", "#"))
+        return news_items
 
-        if any(word in title for word in include_keywords) and not any(word in title for word in exclude_keywords):
-            filtered_news.append((title, link))
+    korean_news = []
+    for name, url in korean_feeds:
+        korean_news.extend(fetch_from_source(name, url, per_feed=3))
 
-        if len(filtered_news) >= 5:
-            break
+    english_news = []
+    for name, url in english_feeds:
+        english_news.extend(fetch_from_source(name, url, per_feed=3))
 
-    return filtered_news
+    return korean_news + english_news  # 한국+영어 뉴스 합치기
+
+
 
 # 단독 실행 테스트
 if __name__ == "__main__":

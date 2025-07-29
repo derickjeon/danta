@@ -4,31 +4,69 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>📊 단타 리포트 메인</title>
+        <title>Be RICH, J's Family</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
-            body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; }
+            body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; display: none; }
             .header { background: linear-gradient(90deg, #4a90e2, #357ab8); color: white; padding: 20px; text-align: center; border-radius: 0 0 15px 15px; margin-bottom: 20px; }
             .card { border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
             .section-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; }
             .report-link { text-decoration: none; color: #4a90e2; font-weight: 500; }
             .report-link:hover { text-decoration: underline; color: #357ab8; }
         </style>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const password = "0601";  // ✅ 원하는 비밀번호로 변경 가능
+                let input = prompt("🔒 비밀번호를 입력하세요:");
+                if (input === password) {
+                    document.body.style.display = "block";
+                } else {
+                    alert("비밀번호가 틀렸습니다. 접근이 거부됩니다.");
+                    window.location.href = "about:blank";
+                }
+            });
+        </script>
     </head>
     <body>
         <header class="header">
-            <h1>📊 단타 리포트 메인</h1>
+            <h1>Be RICH, J's Family</h1>
         </header>
         <main class="container">
+            <!-- 단타 지표 해설 -->
             <div class="card p-4">
                 <div class="section-title">📖 단타 지표 해설</div>
                 <p>주요 단타 매매 지표(RSI, MACD, 볼린저밴드 등)를 확인하고 학습하세요.</p>
                 <a href="indicators.html" class="btn btn-primary btn-sm">지표 해설 보기</a>
             </div>
+
+ <!-- 오늘의 리포트 -->
             <div class="card p-4">
                 <div class="section-title">📰 오늘의 리포트</div>
                 <a href="reports/2025-07-29.html" class="btn btn-success btn-lg w-100">📂 2025-07-29 리포트 열기</a>
             </div>
+
+
+            <!-- 오늘의 요약 -->
+            <div class="card p-4">
+                <div class="section-title">📊 오늘의 국내 증시 / 세계 경제 요약</div>
+                <ul>
+                    <li>KOSPI: 3,230.57</li>
+                    <li>KOSDAQ: 804.45</li>
+                    <li>환율 (USD/KRW): 1,390.50</li>
+                    <li>환율 (CAD/KRW): 1,009.38</li>
+                </ul>
+                <h5 class="mt-3">🪙 오늘의 코인 경제 요약</h5>
+                <ul>
+                    <li>Bitcoin: $117707 (0.18% 변화)</li>
+                    <li>Ethereum: $3767.88 (0.13% 변화)</li>
+                </ul>
+                <h5 class="mt-3">🌍 주요 경제 뉴스</h5>
+                <ul><li><a href="https://www.mk.co.kr/news/world/11380628" target="_blank">[매일경제] “수수료도 싸고 이자도 줘요”...미국쇼핑 직구 때 이젠 코인으로 결제</a></li><li><a href="https://www.mk.co.kr/news/stock/11380625" target="_blank">[매일경제] “증시 갑자기 많이 올라 잠깐 쉬어가자”...파킹형 ETF에 돈 몰린다</a></li><li><a href="https://www.mk.co.kr/news/stock/11380623" target="_blank">[매일경제] 새 주인 찾기 만만치 않은 홈플러스…농협이 구원투수 나서나</a></li><li><a href="#" target="_blank">[한국경제] 현재 뉴스 없음</a></li><li><a href="#" target="_blank">[한국경제] 현재 뉴스 없음</a></li><li><a href="#" target="_blank">[한국경제] 현재 뉴스 없음</a></li><li><a href="#" target="_blank">[연합뉴스] 현재 뉴스 없음</a></li><li><a href="#" target="_blank">[연합뉴스] 현재 뉴스 없음</a></li><li><a href="#" target="_blank">[연합뉴스] 현재 뉴스 없음</a></li><li><a href="https://www.bloomberg.com/news/videos/2025-07-29/trump-gives-russia-10-days-to-reach-peace-agreement-video" target="_blank">[Bloomberg] Trump Gives Russia 10 Days to Reach Peace Agreement</a></li><li><a href="https://www.bloomberg.com/news/articles/2025-07-29/chicago-mayor-floats-revived-tax-on-corporations-to-raise-cash" target="_blank">[Bloomberg] Chicago Mayor Floats Reviving Tax on Corporations to Raise Cash</a></li><li><a href="https://www.bloomberg.com/news/videos/2025-07-29/bessent-says-trump-has-final-say-on-china-tariff-truce-video" target="_blank">[Bloomberg] Bessent, Greer Say Trump Has Final Say on China Tariff Truce</a></li><li><a href="#" target="_blank">[Reuters] 현재 뉴스 없음</a></li><li><a href="#" target="_blank">[Reuters] 현재 뉴스 없음</a></li><li><a href="#" target="_blank">[Reuters] 현재 뉴스 없음</a></li><li><a href="https://www.cnbc.com/2025/07/29/cyberark-shares-jump-on-report-of-palo-alto-networks-takeover-talks.html" target="_blank">[CNBC] CyberArk pops on report of $20B+ acquisition talks with Palo Alto Networks</a></li><li><a href="https://www.cnbc.com/2025/07/29/trump-china-trade-tariffs-bessent.html" target="_blank">[CNBC] Trump approval needed to extend U.S.-China tariff pause, negotiators say</a></li><li><a href="https://www.cnbc.com/2025/07/29/united-airlines-flight-attendant-contract.html" target="_blank">[CNBC] United Airlines flight attendants reject contract with immediate raises of at least 26%</a></li></ul>
+            </div>
+
+  
+
+            <!-- 이전 리포트 목록 -->
             <div class="card p-4">
                 <div class="section-title">📅 이전 리포트 목록</div>
                 <ul class="list-group">
