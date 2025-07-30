@@ -34,4 +34,5 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs   # docs 폴더 내용을 gh-pages로 배포
+        publish_dir: ./docs
+        exclude_assets: index.html   # ✅ index.html 제외
